@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Лист Персонажа</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#1a1a2e;color:#e0e0e0;padding:12px;max-width:600px;margin:0 auto}
+h1{text-align:center;color:#e94560;margin-bottom:16px;font-size:1.4em}
+h2{background:#e94560;padding:6px 12px;border-radius:6px;margin:16px 0 8px;font-size:1em;color:#fff}
+label{display:block;margin-top:8px;font-size:.85em;color:#aaa}
+input,select,textarea{width:100%;padding:8px;border:1px solid #333;border-radius:6px;background:#16213e;color:#e0e0e0;font-size:1em;margin-top:2px}
+textarea{resize:vertical;min-height:50px}
+.card{background:#16213e;border:1px solid #0f3460;border-radius:8px;padding:10px;margin-top:8px;font-size:.85em;line-height:1.5}
+.card b{color:#e94560}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.ether-box{display:flex;align-items:center;gap:10px;margin-top:4px}
+.ether-box button,.pm-btn{width:32px;height:32px;border:none;border-radius:50%;background:#e94560;color:#fff;font-size:1.1em;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ether-box span{font-size:1.5em;font-weight:bold;min-width:30px;text-align:center}
+.tag-row{display:flex;gap:6px;margin-top:4px}.tag-row input{flex:1}
+.bond{margin-top:6px}
+.info{font-size:.75em;color:#666;text-align:center;margin-top:20px}
+.attr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.attr-card{background:#16213e;border:1px solid #0f3460;border-radius:8px;padding:10px;text-align:center}
+.attr-card .attr-name{font-size:.8em;color:#aaa;margin-bottom:4px}
+.attr-card .attr-val{font-size:1.6em;font-weight:bold;color:#e94560}
+.attr-card .attr-btns{display:flex;justify-content:center;gap:8px;margin-top:6px}
+.points-left{background:#0f3460;padding:6px 12px;border-radius:6px;text-align:center;font-size:.9em;margin-bottom:8px}
+.points-left b{color:#e94560;font-size:1.1em}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.skill-row{background:#16213e;border:1px solid #0f3460;border-radius:6px;padding:6px 8px;display:flex;align-items:center;justify-content:space-between}
+.skill-name{font-size:.78em;color:#ccc;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.skill-controls{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.skill-controls .pm-btn{width:26px;height:26px;font-size:.9em}
+.skill-val{font-size:1em;font-weight:bold;color:#e94560;min-width:18px;text-align:center}
+/* Derived stats */
+.derived-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.derived-card{background:#16213e;border:1px solid #0f3460;border-radius:8px;padding:10px;text-align:center}
+.d-name{font-size:.78em;color:#aaa;margin-bottom:4px}
+.d-val{font-size:1.3em;font-weight:bold;color:#e94560;margin-bottom:6px}
+.d-btns{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+.d-btns .pm-btn{width:28px;height:28px;font-size:1em}
+.d-btns .max-btn{height:28px;padding:0 8px;border:none;border-radius:14px;background:#0f3460;color:#fff;font-size:.7em;cursor:pointer}
+.inv-info{background:#16213e;border:1px solid #0f3460;border-radius:8px;padding:10px;margin-top:8px;text-align:center;font-size:.9em}
+.inv-info b{color:#e94560;font-size:1.1em}
+</style>
+</head>
+<body>
+
+<h1>⚔️ Лист Персонажа</h1>
+
+<!-- ЛИЧНОСТЬ -->
+<h2>Личность</h2>
+<label>Имя</label>
+<input type="text" id="name" placeholder="Имя персонажа">
+<div class="row">
+  <div>
+    <label>Раса</label>
+    <select id="race">
+      <option value="">— Выбери —</option>
+      <option>Ангелы</option><option>Ангриалы</option><option>Вампиры</option><option>Гули</option>
+      <option>Демоны кольца</option><option>Люди</option><option>Маги</option><option>Оборотни</option>
+      <option>Сеты</option><option>Сильфы</option><option>Эльфы</option>
+    </select>
+  </div>
+  <div>
+    <label>Класс</label>
+    <select id="charClass">
+      <option value="">— Выбери —</option>
+      <option>Мечник</option><option>Торговец</option><option>Послушник</option><option>Волшебник</option>
+      <option>Вор</option><option>Лучник</option><option>Ниндзя</option><option>Варвар</option>
+      <option>Монах</option><option>Рунный мастер</option><option>Друид</option><option>Скаут</option>
+      <option>Ассасин</option><option>Линкер</option>
+    </select>
+  </div>
+</div>
+<label>Происхождение</label>
+<select id="origin">
+  <option value="">— Выбери —</option>
+  <option>Империя Кадвир</option><option>Королевство Гилдас</option><option>Аттария</option>
+  <option>Земли Валаса</option><option>Королевство кувитов</option><option>Пламенные острова</option>
+  <option>Айдрасиан</option><option>Дикие земли</option><option>Тхалор</option>
+  <option>Туманный континент</option><option>Другой мир</option>
+</select>
+<div id="raceCard" class="card" style="display:none">
+  <b>🧬 Раса</b><br>Базовое ХП: <span id="raceHP">—</span> | Тег: <span id="raceTag">—</span><br>
+  Способность: <span id="raceAbility">—</span><br>Расовый ход: <span id="raceMove">—</span>
+</div>
+<div id="classCard" class="card" style="display:none">
+  <b>⚔️ Класс</b><br>Базовое ХП: <span id="classHP">—</span> | Орудие: <span id="classWeapon">—</span> | Броня: <span id="classArmor">—</span><br>
+  Лицензия: <span id="classLicense">—</span><br>Ходы: <span id="classMoves">—</span>
+</div>
+<div id="originCard" class="card" style="display:none">
+  <b>🌍 Тег происхождения:</b> <span id="originTag">—</span>
+</div>
+
+<!-- ТЕГИ / ЭФИР -->
+<h2>Теги и Эфир</h2>
+<label>Теги (каждый даёт +1 к навыку)</label>
+<div class="tag-row">
+  <input type="text" id="tag1" placeholder="Тег 1">
+  <input type="text" id="tag2" placeholder="Тег 2">
+  <input type="text" id="tag3" placeholder="Тег 3">
+</div>
+<label>Очки Эфира</label>
+<div class="ether-box">
+  <button onclick="changeEther(-1)">−</button>
+  <span id="ether">0</span>
+  <button onclick="changeEther(1)">+</button>
+</div>
+
+<!-- СВЯЗИ -->
+<h2>Связи</h2>
+<div class="bond"><label>Связь 1</label><input type="text" id="bond1" placeholder="Имя — описание"></div>
+<div class="bond"><label>Связь 2</label><input type="text" id="bond2" placeholder="Имя — описание"></div>
+<div class="bond"><label>Связь 3</label><input type="text" id="bond3" placeholder="Имя — описание"></div>
+<div class="bond"><label>Связь 4</label><input type="text" id="bond4" placeholder="Имя — описание"></div>
+
+<!-- АТРИБУТЫ -->
+<h2>Атрибуты</h2>
+<div class="points-left">Очки атрибутов: <b id="attrPointsLeft">4</b> / 4</div>
+<div class="attr-grid">
+  <div class="attr-card"><div class="attr-name">💪 Сила</div><div class="attr-val" id="attr_str">0</div>
+    <div class="attr-btns"><button class="pm-btn" onclick="changeAttr('str',-1)">−</button><button class="pm-btn" onclick="changeAttr('str',1)">+</button></div></div>
+  <div class="attr-card"><div class="attr-name">🧠 Интеллект</div><div class="attr-val" id="attr_int">0</div>
+    <div class="attr-btns"><button class="pm-btn" onclick="changeAttr('int',-1)">−</button><button class="pm-btn" onclick="changeAttr('int',1)">+</button></div></div>
+  <div class="attr-card"><div class="attr-name">🛡 Телосложение</div><div class="attr-val" id="attr_con">0</div>
+    <div class="attr-btns"><button class="pm-btn" onclick="changeAttr('con',-1)">−</button><button class="pm-btn" onclick="changeAttr('con',1)">+</button></div></div>
+  <div class="attr-card"><div class="attr-name">⚡ Выносливость</div><div class="attr-val" id="attr_end">0</div>
+    <div class="attr-btns"><button class="pm-btn" onclick="changeAttr('end',-1)">−</button><button class="pm-btn" onclick="changeAttr('end',1)">+</button></div></div>
+</div>
+
+<!-- ПРОИЗВОДНЫЕ -->
+<h2>Производные характеристики</h2>
+<div class="row">
+  <div><label>Уровень</label><input type="number" id="level" value="1" min="1"></div>
+  <div><label>Классовое ХП</label><input type="number" id="classHPValue" value="0" min="0"></div>
+</div>
+<label>Бонус маны от магических предметов</label>
+<input type="number" id="manaBonus" value="0" min="0">
+
+<div class="derived-grid" style="margin-top:10px">
+  <div class="derived-card">
+    <div class="d-name">❤️ Здоровье</div>
+    <div class="d-val"><span id="curHP">0</span> / <span id="maxHP">10</span></div>
+    <div class="d-btns">
+      <button class="pm-btn" onclick="changeCur('HP',-1)">−</button>
+      <button class="pm-btn" onclick="changeCur('HP',1)">+</button>
+      <button class="max-btn" onclick="fillMax('HP')">MAX</button>
+    </div>
+  </div>
+  <div class="derived-card">
+    <div class="d-name">💧 Мана</div>
+    <div class="d-val"><span id="curMana">0</span> / <span id="maxMana">1</span></div>
+    <div class="d-btns">
+      <button class="pm-btn" onclick="changeCur('Mana',-1)">−</button>
+      <button class="pm-btn" onclick="changeCur('Mana',1)">+</button>
+      <button class="max-btn" onclick="fillMax('Mana')">MAX</button>
+    </div>
+  </div>
+  <div class="derived-card">
+    <div class="d-name">✨ Заряды артефактов</div>
+    <div class="d-val"><span id="curCharges">0</span> / <span id="maxCharges">0</span></div>
+    <div class="d-btns">
+      <button class="pm-btn" onclick="changeCur('Charges',-1)">−</button>
+      <button class="pm-btn" onclick="changeCur('Charges',1)">+</button>
+      <button class="max-btn" onclick="fillMax('Charges')">MAX</button>
+    </div>
+  </div>
+  <div class="derived-card">
+    <div class="d-name">🍖 Насыщенность</div>
+    <div class="d-val"><span id="curSat">0</span> / <span id="maxSat">11</span></div>
+    <div class="d-btns">
+      <button class="pm-btn" onclick="changeCur('Sat',-1)">−</button>
+      <button class="pm-btn" onclick="changeCur('Sat',1)">+</button>
+      <button class="max-btn" onclick="fillMax('Sat')">MAX</button>
+    </div>
+  </div>
+</div>
+<div class="inv-info">📦 Слоты инвентаря: <b id="maxInv">10</b></div>
+
+<!-- НАВЫКИ -->
+<h2>Навыки</h2>
+<div class="points-left">Очки навыков: <b id="skillPointsLeft">10</b> / 10</div>
+<div class="skills-grid" id="skillsGrid"></div>
+
+<p class="info">Данные автосохраняются в браузере 💾</p>
+
+<script>
+const raceData={'Ангелы':{hp:'?',tag:'?',ability:'?',move:'?'},'Ангриалы':{hp:'?',tag:'?',ability:'?',move:'?'},'Вампиры':{hp:'?',tag:'?',ability:'?',move:'?'},'Гули':{hp:'?',tag:'?',ability:'?',move:'?'},'Демоны кольца':{hp:'?',tag:'?',ability:'?',move:'?'},'Люди':{hp:'?',tag:'?',ability:'?',move:'?'},'Маги':{hp:'?',tag:'?',ability:'?',move:'?'},'Оборотни':{hp:'?',tag:'?',ability:'?',move:'?'},'Сеты':{hp:'?',tag:'?',ability:'?',move:'?'},'Сильфы':{hp:'?',tag:'?',ability:'?',move:'?'},'Эльфы':{hp:'?',tag:'?',ability:'?',move:'?'}};
+const classData={'Мечник':{hp:'?',weapon:'?',armor:'?',license:'?',moves:'?'},'Торговец':{hp:'?',weapon:'?',armor:'?',license:'?',moves:'?'},'Послушник':{hp:'?',weapon:'?',armor:'?',license:'?',moves:'?'},'Волшебник':{hp:'?',weapon:'?',armor:'?',license:'?',moves:'?'},'Вор':{hp:'?',weapon:'?',armor:'?',license:'?',moves:'?'},'Лучник':{hp:'?',weapon:'?',armor:'?',license:'?',moves:'?'},'Ниндзя':{hp:'?',weapon:'?',armor:'?',license:'?',moves:'?'},'Варвар':{hp:'?',weapon:'?',armor:'?',license:'?',moves:'?'},'Монах':{hp:'?',weapon:'?',armor:'?',license:'?',moves:'?'},'Рунный мастер':{hp:'?',weapon:'?',armor:'?',license:'?',moves:'?'},'Друид':{hp:'?',weapon:'?',armor:'?',license:'?',moves:'?'},'Скаут':{hp:'?',weapon:'?',armor:'?',license:'?',moves:'?'},'Ассасин':{hp:'?',weapon:'?',armor:'?',license:'?',moves:'?'},'Линкер':{hp:'?',weapon:'?',armor:'?',license:'?',moves:'?'}};
+const originData={'Империя Кадвир':'?','Королевство Гилдас':'?','Аттария':'?','Земли Валаса':'?','Королевство кувитов':'?','Пламенные острова':'?','Айдрасиан':'?','Дикие земли':'?','Тхалор':'?','Туманный континент':'?','Другой мир':'?'};
+
+document.getElementById('race').addEventListener('change',function(){
+  const d=raceData[this.value],c=document.getElementById('raceCard');
+  if(d){c.style.display='block';raceHP.textContent=d.hp;raceTag.textContent=d.tag;raceAbility.textContent=d.ability;raceMove.textContent=d.move;}else c.style.display='none';save();
+});
+document.getElementById('charClass').addEventListener('change',function(){
+  const d=classData[this.value],c=document.getElementById('classCard');
+  if(d){c.style.display='block';classHP.textContent=d.hp;classWeapon.textContent=d.weapon;classArmor.textContent=d.armor;classLicense.textContent=d.license;classMoves.textContent=d.moves;}else c.style.display='none';save();
+});
+document.getElementById('origin').addEventListener('change',function(){
+  const t=originData[this.value],c=document.getElementById('originCard');
+  if(t){c.style.display='block';originTag.textContent=t;}else c.style.display='none';save();
+});
+
+function changeEther(n){let v=parseInt(ether.textContent)||0;v=Math.max(0,v+n);ether.textContent=v;save();}
+
+// АТРИБУТЫ
+const ATTR_MAX=2,ATTR_TOTAL=4,attrs=['str','int','con','end'];
+function getAttrUsed(){let s=0;attrs.forEach(a=>s+=parseInt(document.getElementById('attr_'+a).textContent)||0);return s;}
+function updateAttrPoints(){attrPointsLeft.textContent=ATTR_TOTAL-getAttrUsed();}
+function changeAttr(id,n){
+  const el=document.getElementById('attr_'+id);let v=parseInt(el.textContent)||0;const nv=v+n;
+  if(nv<0||nv>ATTR_MAX)return;
+  if(n>0&&getAttrUsed()>=ATTR_TOTAL)return;
+  el.textContent=nv;updateAttrPoints();recalcDerived();save();
+}
+
+// НАВЫКИ
+const SKILL_MAX=3,SKILL_TOTAL=10;
+const skillNames=['Атлетика','Акробатика','Ловкость рук','Скрытность','Внимательность','Расследование','Проницательность','Выживание','Убеждение','Обман','Харизма','Запугивание','История миров','Знание наслоения','Знание магии','Природоведение','Медицина','Ремесло','Инженерия','Воля'];
+function buildSkills(){
+  const g=document.getElementById('skillsGrid');g.innerHTML='';
+  skillNames.forEach((n,i)=>{g.innerHTML+=`<div class="skill-row"><span class="skill-name" title="${n}">${n}</span><div class="skill-controls"><button class="pm-btn" onclick="changeSkill(${i},-1)">−</button><span class="skill-val" id="skill_${i}">0</span><button class="pm-btn" onclick="changeSkill(${i},1)">+</button></div></div>`;});
+}
+function getSkillUsed(){let s=0;for(let i=0;i<skillNames.length;i++)s+=parseInt(document.getElementById('skill_'+i).textContent)||0;return s;}
+function updateSkillPoints(){skillPointsLeft.textContent=SKILL_TOTAL-getSkillUsed();}
+function changeSkill(i,n){
+  const el=document.getElementById('skill_'+i);let v=parseInt(el.textContent)||0;const nv=v+n;
+  if(nv<0||nv>SKILL_MAX)return;
+  if(n>0&&getSkillUsed()>=SKILL_TOTAL)return;
+  el.textContent=nv;updateSkillPoints();save();
+}
+buildSkills();
+
+// ПРОИЗВОДНЫЕ
+function recalcDerived(){
+  const con=+document.getElementById('attr_con').textContent||0;
+  const int_=+document.getElementById('attr_int').textContent||0;
+  const end=+document.getElementById('attr_end').textContent||0;
+  const lvl=+document.getElementById('level').value||1;
+  const cHP=+document.getElementById('classHPValue').value||0;
+  const mB=+document.getElementById('manaBonus').value||0;
+  maxHP.textContent=con+10+cHP;
+  maxMana.textContent=int_+lvl+mB;
+  maxCharges.textContent=int_;
+  maxSat.textContent=con+lvl+10;
+  maxInv.textContent=end+10;
+  ['HP','Mana','Charges','Sat'].forEach(k=>{
+    const cur=+document.getElementById('cur'+k).textContent||0;
+    const max=+document.getElementById('max'+k).textContent||0;
+    if(cur>max)document.getElementById('cur'+k).textContent=max;
+  });
+}
+function changeCur(k,n){
+  const el=document.getElementById('cur'+k);
+  const max=+document.getElementById('max'+k).textContent||0;
+  let v=parseInt(el.textContent)||0;
+  v=Math.max(0,Math.min(max,v+n));
+  el.textContent=v;save();
+}
+function fillMax(k){document.getElementById('cur'+k).textContent=document.getElementById('max'+k).textContent;save();}
+
+['level','classHPValue','manaBonus'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',()=>{recalcDerived();save();});
+});
+
+// СОХРАНЕНИЕ
+const fields=['name','race','charClass','origin','tag1','tag2','tag3','bond1','bond2','bond3','bond4','level','classHPValue','manaBonus'];
+function save(){
+  const data={};
+  fields.forEach(id=>data[id]=document.getElementById(id).value);
+  data.ether=ether.textContent;
+  attrs.forEach(a=>data['attr_'+a]=document.getElementById('attr_'+a).textContent);
+  for(let i=0;i<skillNames.length;i++)data['skill_'+i]=document.getElementById('skill_'+i).textContent;
+  ['HP','Mana','Charges','Sat'].forEach(k=>data['cur'+k]=document.getElementById('cur'+k).textContent);
+  localStorage.setItem('charSheet',JSON.stringify(data));
+}
+function load(){
+  const raw=localStorage.getItem('charSheet');if(!raw){recalcDerived();return;}
+  const data=JSON.parse(raw);
+  fields.forEach(id=>{if(data[id]!==undefined)document.getElementById(id).value=data[id];});
+  if(data.ether)ether.textContent=data.ether;
+  attrs.forEach(a=>{if(data['attr_'+a]!==undefined)document.getElementById('attr_'+a).textContent=data['attr_'+a];});
+  for(let i=0;i<skillNames.length;i++)if(data['skill_'+i]!==undefined)document.getElementById('skill_'+i).textContent=data['skill_'+i];
+  ['HP','Mana','Charges','Sat'].forEach(k=>{if(data['cur'+k]!==undefined)document.getElementById('cur'+k).textContent=data['cur'+k];});
+  updateAttrPoints();updateSkillPoints();recalcDerived();
+  document.getElementById('race').dispatchEvent(new Event('change'));
+  document.getElementById('charClass').dispatchEvent(new Event('change'));
+  document.getElementById('origin').dispatchEvent(new Event('change'));
+}
+document.querySelectorAll('input,select,textarea').forEach(el=>{el.addEventListener('input',save);el.addEventListener('change',save);});
+load();
+</script>
+</body>
+  </html>
