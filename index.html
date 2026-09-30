@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Лист Персонажа</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>⚔️ Лист Персонажа</h1>
+
+<!-- ЛИЧНОСТЬ -->
+<h2>Личность</h2>
+<label>Имя</label>
+<input type="text" id="name" placeholder="Имя персонажа">
+<div class="row">
+  <div>
+    <label>Раса</label>
+    <select id="race">
+      <option value="">— Выбери —</option>
+      <option>Ангелы</option><option>Ангриалы</option><option>Вампиры</option><option>Гули</option>
+      <option>Демоны кольца</option><option>Люди</option><option>Маги</option><option>Оборотни</option>
+      <option>Сеты</option><option>Сильфы</option><option>Эльфы</option>
+    </select>
+  </div>
+  <div>
+    <label>Класс</label>
+    <select id="charClass">
+      <option value="">— Выбери —</option>
+      <option>Мечник</option><option>Торговец</option><option>Послушник</option><option>Волшебник</option>
+      <option>Вор</option><option>Лучник</option><option>Ниндзя</option><option>Варвар</option>
+      <option>Монах</option><option>Рунный мастер</option><option>Друид</option><option>Скаут</option>
+      <option>Ассасин</option><option>Линкер</option>
+    </select>
+  </div>
+</div>
+<label>Происхождение</label>
+<select id="origin">
+  <option value="">— Выбери —</option>
+  <option>Империя Кадвир</option><option>Королевство Гилдас</option><option>Аттария</option>
+  <option>Земли Валаса</option><option>Королевство кувитов</option><option>Пламенные острова</option>
+  <option>Айдрасиан</option><option>Дикие земли</option><option>Тхалор</option>
+  <option>Туманный континент</option><option>Другой мир</option>
+</select>
+<div id="raceCard" class="card" style="display:none">
+  <b>🧬 Раса</b><br>Базовое ХП: <span id="raceHP">—</span> | Тег: <span id="raceTag">—</span><br>
+  Способность: <span id="raceAbility">—</span><br>Расовый ход: <span id="raceMove">—</span>
+</div>
+<div id="classCard" class="card" style="display:none">
+  <b>⚔️ Класс</b><br>Базовое ХП: <span id="classHP">—</span> | Орудие: <span id="classWeapon">—</span> | Броня: <span id="classArmor">—</span><br>
+  Лицензия: <span id="classLicense">—</span><br>Ходы: <span id="classMoves">—</span>
+  <button class="start-gear-btn" onclick="addStartingGear()">🎒 Получить стартовое снаряжение</button>
+</div>
+<div id="originCard" class="card" style="display:none">
+  <b>🌍 Тег происхождения:</b> <span id="originTag">—</span>
+</div>
+
+<!-- ТЕГИ / ЭФИР -->
+<h2>Теги и Эфир</h2>
+<label>Теги (каждый даёт +1 к навыку)</label>
+<div class="tag-row">
+  <input type="text" id="tag1" placeholder="Тег 1">
+  <input type="text" id="tag2" placeholder="Тег 2">
+  <input type="text" id="tag3" placeholder="Тег 3">
+</div>
+<label>Очки Эфира</label>
+<div class="ether-box">
+  <button onclick="changeEther(-1)">−</button>
+  <span id="ether">0</span>
+  <button onclick="changeEther(1)">+</button>
+</div>
+
+<!-- СВЯЗИ -->
+<h2>Связи</h2>
+<div class="bond"><label>Связь 1</label><input type="text" id="bond1" placeholder="Имя — описание"></div>
+<div class="bond"><label>Связь 2</label><input type="text" id="bond2" placeholder="Имя — описание"></div>
+<div class="bond"><label>Связь 3</label><input type="text" id="bond3" placeholder="Имя — описание"></div>
+<div class="bond"><label>Связь 4</label><input type="text" id="bond4" placeholder="Имя — описание"></div>
+
+<!-- АТРИБУТЫ -->
+<h2>Атрибуты</h2>
+<div class="points-left">Очки атрибутов: <b id="attrPointsLeft">4</b> / 4</div>
+<div class="attr-grid">
+  <div class="attr-card"><div class="attr-name">💪 Сила</div><div class="attr-val" id="attr_str">0</div>
+    <div class="attr-btns"><button class="pm-btn" onclick="changeAttr('str',-1)">−</button><button class="pm-btn" onclick="changeAttr('str',1)">+</button></div></div>
+  <div class="attr-card"><div class="attr-name">🧠 Интеллект</div><div class="attr-val" id="attr_int">0</div>
+    <div class="attr-btns"><button class="pm-btn" onclick="changeAttr('int',-1)">−</button><button class="pm-btn" onclick="changeAttr('int',1)">+</button></div></div>
+  <div class="attr-card"><div class="attr-name">🛡 Телосложение</div><div class="attr-val" id="attr_con">0</div>
+    <div class="attr-btns"><button class="pm-btn" onclick="changeAttr('con',-1)">−</button><button class="pm-btn" onclick="changeAttr('con',1)">+</button></div></div>
+  <div class="attr-card"><div class="attr-name">⚡ Выносливость</div><div class="attr-val" id="attr_end">0</div>
+    <div class="attr-btns"><button class="pm-btn" onclick="changeAttr('end',-1)">−</button><button class="pm-btn" onclick="changeAttr('end',1)">+</button></div></div>
+</div>
+
+<!-- ПРОИЗВОДНЫЕ -->
+<h2>Производные характеристики</h2>
+<div class="row">
+  <div><label>Уровень</label><input type="number" id="level" value="1" min="1"></div>
+  <div><label>Классовое ХП</label><input type="number" id="classHPValue" value="0" min="0"></div>
+</div>
+<label>Бонус маны от магических предметов</label>
+<input type="number" id="manaBonus" value="0" min="0">
+
+<div class="derived-grid" style="margin-top:10px">
+  <div class="derived-card">
+    <div class="d-name">❤️ Здоровье</div>
+    <div class="d-val"><span id="curHP">0</span> / <span id="maxHP">10</span></div>
+    <div class="d-btns">
+      <button class="pm-btn" onclick="changeCur('HP',-1)">−</button>
+      <button class="pm-btn" onclick="changeCur('HP',1)">+</button>
+      <button class="max-btn" onclick="fillMax('HP')">MAX</button>
+    </div>
+  </div>
+  <div class="derived-card">
+    <div class="d-name">💧 Мана</div>
+    <div class="d-val"><span id="curMana">0</span> / <span id="maxMana">1</span></div>
+    <div class="d-btns">
+      <button class="pm-btn" onclick="changeCur('Mana',-1)">−</button>
+      <button class="pm-btn" onclick="changeCur('Mana',1)">+</button>
+      <button class="max-btn" onclick="fillMax('Mana')">MAX</button>
+    </div>
+  </div>
+  <div class="derived-card">
+    <div class="d-name">✨ Заряды артефактов</div>
+    <div class="d-val"><span id="curCharges">0</span> / <span id="maxCharges">0</span></div>
+    <div class="d-btns">
+      <button class="pm-btn" onclick="changeCur('Charges',-1)">−</button>
+      <button class="pm-btn" onclick="changeCur('Charges',1)">+</button>
+      <button class="max-btn" onclick="fillMax('Charges')">MAX</button>
+    </div>
+  </div>
+  <div class="derived-card">
+    <div class="d-name">🍖 Насыщенность</div>
+    <div class="d-val"><span id="curSat">0</span> / <span id="maxSat">11</span></div>
+    <div class="d-btns">
+      <button class="pm-btn" onclick="changeCur('Sat',-1)">−</button>
+      <button class="pm-btn" onclick="changeCur('Sat',1)">+</button>
+      <button class="max-btn" onclick="fillMax('Sat')">MAX</button>
+    </div>
+  </div>
+</div>
+
+<!-- ИНВЕНТАРЬ -->
+<h2>Инвентарь</h2>
+<div class="inv-header">
+  <div class="inv-status" id="invStatus">Занято слотов: 0 / 10</div>
+  <button class="add-item-btn" onclick="addItem()">➕ Предмет</button>
+</div>
+<div id="inventoryList"></div>
+
+<!-- НАВЫКИ -->
+<h2>Навыки</h2>
+<div class="points-left">Очки навыков: <b id="skillPointsLeft">10</b> / 10</div>
+<div class="skills-grid" id="skillsGrid"></div>
+
+<p class="info">Данные автосохраняются в браузере 💾</p>
+
+<script src="script.js"></script>
+</body>
+  </html>
