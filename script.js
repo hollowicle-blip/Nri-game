@@ -368,7 +368,18 @@ function addStartingGear() {
 
 // === НАЧАЛЬНЫЕ НАБОРЫ ===
 function buildKitList() {
-  const container = document.getElementById('kitList'); container.innerHTML = '';
+  const container = document.getElementById('kitList');
+  const section = document.getElementById('starterKitsSection');
+  
+  // Если набор уже выбран, полностью скрываем весь блок снаряжения
+  if (chosenKit) {
+    section.style.display = 'none';
+    return;
+  } else {
+    section.style.display = 'block';
+  }
+
+  container.innerHTML = '';
   starterKits.forEach((kit, index) => {
     const isTaken = chosenKit === kit.name;
     const card = document.createElement('div'); card.className = 'kit-card'; card.id = 'kit_' + index;
@@ -388,7 +399,8 @@ function toggleKit(index) { document.getElementById('kit_' + index).classList.to
 function takeKit(index) {
   const kit = starterKits[index];
   
-  // Снимаем предметы старого набора (если был)
+  // Так как теперь блок пропадает после выбора, это предупреждение 
+  // сработает только в редких случаях, но пусть останется для безопасности
   let tempInventory = JSON.parse(JSON.stringify(inventoryItems));
   if (chosenKit) {
     if (!confirm(`Заменить "${chosenKit}" на "${kit.name}"? Вещи старого набора удалятся.`)) return;
@@ -401,11 +413,9 @@ function takeKit(index) {
     }
   }
   
-  // Считаем, сколько слотов нужно для нового набора
   let newSlots = 0;
   kit.items.forEach(item => { newSlots += item.s ? Math.ceil(item.q / 10) : item.q; });
   
-  // Считаем, сколько займёт временный инвентарь
   let tempUsed = 0;
   tempInventory.forEach(item => { tempUsed += item.s ? Math.ceil(item.q / 10) : item.q; });
   
@@ -418,7 +428,10 @@ function takeKit(index) {
   kit.items.forEach(item => inventoryItems.push(JSON.parse(JSON.stringify(item))));
   chosenKit = kit.name;
   localStorage.setItem('chosenKit', chosenKit);
-  renderInventory(); buildKitList(); save();
+  
+  renderInventory(); 
+  buildKitList(); // Эта функция теперь автоматически скроет весь блок!
+  save();
 }
 
 // === СОХРАНЕНИЕ И ЗАГРУЗКА ===
