@@ -351,3 +351,170 @@ document.querySelectorAll('input, select, textarea').forEach(el => {
 });
 
 load();
+// === НАБОРЫ НАЧАЛЬНОГО СНАРЯЖЕНИЯ ===
+const starterKits = [
+  {
+    name: '🧭 Набор следопыта',
+    items: [
+      { n: 'Компас и звёздная карта', q: 1, s: false },
+      { n: 'Пеньковый канат 15м с кошкой', q: 1, s: false },
+      { n: 'Мелок и маркерные колышки', q: 1, s: false },
+      { n: 'Малая подзорная труба', q: 1, s: false },
+      { n: 'Огниво и трутовые трубки', q: 5, s: true }
+    ]
+  },
+  {
+    name: '🍳 Набор повара',
+    items: [
+      { n: 'Котелок и специи', q: 1, s: false },
+      { n: 'Разделочный нож и складная доска', q: 1, s: false },
+      { n: 'Фляга с крепким алкоголем', q: 1, s: false },
+      { n: 'Чугунная ступка с пестиком', q: 1, s: false },
+      { n: 'Проветриваемый мешочек', q: 1, s: false }
+    ]
+  },
+  {
+    name: '🔦 Набор дозорного',
+    items: [
+      { n: 'Сигнальный рог или свисток', q: 1, s: false },
+      { n: 'Фонарь-потайник и масло', q: 1, s: false },
+      { n: 'Отвар/ягоды «ночноцвета»', q: 1, s: false },
+      { n: 'Колокольчики и бечёвка', q: 1, s: false },
+      { n: 'Тёплый шерстяной плед', q: 1, s: false }
+    ]
+  },
+  {
+    name: '🩹 Набор лекаря',
+    items: [
+      { n: 'Бинты и льняные жгуты', q: 5, s: true },
+      { n: 'Прижигательные иглы и ланцет', q: 1, s: false },
+      { n: 'Мазь от ожогов и гноя', q: 1, s: false },
+      { n: 'Успокоительная настойка', q: 1, s: false },
+      { n: 'Нюхательная соль и дубильный порошок', q: 1, s: false }
+    ]
+  },
+  {
+    name: '🕵️ Набор разведчика',
+    items: [
+      { n: 'Маскировочный грим (сажа, глина)', q: 1, s: false },
+      { n: 'Мягкие кожаные чехлы для обуви', q: 1, s: false },
+      { n: 'Рулон тонкой прочной проволоки', q: 1, s: false },
+      { n: 'Металлическое зеркальце на ручке', q: 1, s: false },
+      { n: 'Пучок отмычек', q: 5, s: true }
+    ]
+  },
+  {
+    name: '🗺️ Набор картографа',
+    items: [
+      { n: 'Тубус с чистыми пергаментами', q: 1, s: false },
+      { n: 'Перо, вощёные чернила, грифели', q: 5, s: true },
+      { n: 'Курвиметр и латунный циркуль', q: 1, s: false },
+      { n: 'Увеличительное стекло', q: 1, s: false },
+      { n: 'Песочные часы (1 минута)', q: 1, s: false }
+    ]
+  },
+  {
+    name: '🤝 Набор переговорщика',
+    items: [
+      { n: 'Шёлковые платки и ароматное мыло', q: 1, s: false },
+      { n: 'Дорожные кубики и колода карт', q: 1, s: false },
+      { n: 'Личный журнал слухов с замочком', q: 1, s: false },
+      { n: 'Бутылка хорошего вина', q: 1, s: false },
+      { n: 'Кошелёк с двойным дном', q: 1, s: false }
+    ]
+  },
+  {
+    name: '🏹 Набор охотника',
+    items: [
+      { n: 'Стальной охотничий капкан', q: 1, s: false },
+      { n: 'Потрошильные ножи и крюки', q: 1, s: false },
+      { n: 'Флакон запах-приманки', q: 5, s: true },
+      { n: 'Смола для тетивы и оперения', q: 1, s: false },
+      { n: 'Деревянные манки', q: 1, s: false }
+    ]
+  },
+  {
+    name: '🔨 Набор ремесленника',
+    items: [
+      { n: 'Точильный камень и масло', q: 1, s: false },
+      { n: 'Иглы и жильные нити', q: 5, s: true },
+      { n: 'Молоточек и наковаленка-набалдашник', q: 1, s: false },
+      { n: 'Мешочек с заклёпками, ремешками, пряжками', q: 1, s: false },
+      { n: 'Смола/воск и ветошь', q: 1, s: false }
+    ]
+  }
+];
+
+// Запоминаем выбранный набор
+let chosenKit = localStorage.getItem('chosenKit') || '';
+
+function buildKitList() {
+  const container = document.getElementById('kitList');
+  container.innerHTML = '';
+
+  starterKits.forEach((kit, index) => {
+    const isTaken = chosenKit === kit.name;
+    const card = document.createElement('div');
+    card.className = 'kit-card';
+    card.id = 'kit_' + index;
+
+    let itemsHTML = '';
+    kit.items.forEach(item => {
+      const stackLabel = item.s ? ` <b>(расходник ×${item.q})</b>` : '';
+      itemsHTML += `<div class="kit-item">• ${item.n}${stackLabel}</div>`;
+    });
+
+    card.innerHTML = `
+      <div class="kit-header" onclick="toggleKit(${index})">
+        <span>${kit.name}</span>
+        <span class="kit-arrow">►</span>
+      </div>
+      <div class="kit-body">
+        ${itemsHTML}
+        <button class="kit-take-btn ${isTaken ? 'kit-taken' : ''}" 
+                id="kitBtn_${index}" 
+                onclick="takeKit(${index})">
+          ${isTaken ? '✅ Набор выбран' : '🎒 Взять этот набор'}
+        </button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleKit(index) {
+  const card = document.getElementById('kit_' + index);
+  card.classList.toggle('open');
+}
+
+function takeKit(index) {
+  const kit = starterKits[index];
+
+  if (chosenKit) {
+    if (!confirm(`У тебя уже выбран "${chosenKit}".\nЗаменить на "${kit.name}"?\n\nПредметы старого набора будут удалены из инвентаря.`)) {
+      return;
+    }
+    // Удаляем предметы старого набора из инвентаря
+    const oldKit = starterKits.find(k => k.name === chosenKit);
+    if (oldKit) {
+      oldKit.items.forEach(oldItem => {
+        const idx = inventoryItems.findIndex(inv => inv.n === oldItem.n);
+        if (idx !== -1) inventoryItems.splice(idx, 1);
+      });
+    }
+  }
+
+  // Добавляем предметы нового набора
+  kit.items.forEach(item => {
+    inventoryItems.push(JSON.parse(JSON.stringify(item)));
+  });
+
+  chosenKit = kit.name;
+  localStorage.setItem('chosenKit', chosenKit);
+
+  renderInventory();
+  buildKitList();
+  save();
+}
+
+buildKitList();
