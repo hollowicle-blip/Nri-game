@@ -338,3 +338,75 @@ textarea {
   font-size: 1.1em;
   cursor: pointer;
 }
+/* === НАБОРЫ СНАРЯЖЕНИЯ === */
+.kit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.kit-card {
+  background: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.kit-header {
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .9em;
+  font-weight: bold;
+  color: #e0e0e0;
+}
+.kit-header:hover {
+  background: #0f3460;
+}
+.kit-arrow {
+  color: #e94560;
+  font-size: 1.2em;
+  transition: transform 0.2s;
+}
+.kit-card.open .kit-arrow {
+  transform: rotate(90deg);
+}
+.kit-body {
+  display: none;
+  padding: 0 12px 10px;
+}
+.kit-card.open .kit-body {
+  display: block;
+}
+.kit-item {
+  font-size: .8em;
+  color: #aaa;
+  padding: 2px 0;
+  border-bottom: 1px solid #0f3460;
+}
+.kit-item:last-of-type {
+  border-bottom: none;
+}
+.kit-item b {
+  color: #e94560;
+}
+.kit-take-btn {
+  margin-top: 8px;
+  width: 100%;
+  padding: 8px;
+  background: #e94560;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: .85em;
+}
+.kit-take-btn:active {
+  background: #c73650;
+}
+.kit-taken {
+  background: #0f3460;
+  pointer-events: none;
+  }
