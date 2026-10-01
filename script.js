@@ -236,38 +236,134 @@ function fillMax(k) { document.getElementById('cur' + k).textContent = document.
 });
 
 // === ИНВЕНТАРЬ ===
+function getUsedSlots() {
+  let used = 0;
+  inventoryItems.forEach(item => { used += item.s ? Math.ceil(item.q / 10) : item.q; });
+  return used;
+}
+
+function getMaxSlots() {
+  const end = +document.getElementById('attr_end').textContent || 0;
+  return end + 10;
+}
+
 function updateInventoryCapacity(maxSlots) {
-  let used = 0; inventoryItems.forEach(item => { used += item.s ? Math.ceil(item.q / 10) : item.q; });
-  const statusEl = document.getElementById('invStatus'); statusEl.textContent = `Занято слотов: ${used} / ${maxSlots}`;
-  if (used > maxSlots) statusEl.classList.add('overloaded'); else statusEl.classList.remove('overloaded');
+  const used = getUsedSlots();
+  const statusEl = document.getElementById('invStatus');
+  statusEl.textContent = `Занято слотов: ${used} / ${maxSlots}`;
+  if (used > maxSlots) statusEl.classList.add('overloaded');
+  else statusEl.classList.remove('overloaded');
 }
 
 function renderInventory() {
-  const container = document.getElementById('inventoryList'); container.innerHTML = '';
+  const container = document.getElementById('inventoryList');
+  container.innerHTML = '';
   inventoryItems.forEach((item, index) => {
-    const row = document.createElement('div'); row.className = 'item-row';
+    const row = document.createElement('div');
+    row.className = 'item-row';
     row.innerHTML = `
       <input type="text" class="item-name" value="${item.n}" oninput="editItem(${index}, 'n', this.value)">
       <div class="item-qty-box">
-        <button class="pm-btn" onclick="changeItemQty(${index}, -1)">−</button>
+        <button class="pm-btn" onclick="decItem(${index})">−</button>
         <span class="item-qty">${item.q}</span>
-        <button class="pm-btn" onclick="changeItemQty(${index}, 1)">+</button>
+        <button class="pm-btn" onclick="incItem(${index})">+</button>
       </div>
-      <div class="item-chk"><span>Расходник</span><input type="checkbox" ${item.s ? 'checked' : ''} onchange="editItem(${index}, 's', this.checked)"></div>
+      <div class="item-chk"><span>Расходник</span><input type="checkbox" ${item.s ? 'checked' : ''} onchange="toggleStack(${index}, this.checked)"></div>
       <button class="del-item-btn" onclick="removeItem(${index})">✕</button>`;
     container.appendChild(row);
   });
   recalcDerived();
 }
-function addItem(n = '', q = 1, s = false) { inventoryItems.push({ n, q, s }); renderInventory(); save(); }
-function removeItem(index) { inventoryItems.splice(index, 1); renderInventory(); save(); }
-function changeItemQty(index, amt) { inventoryItems[index].q = Math.max(1, inventoryItems[index].q + amt); renderInventory(); save(); }
-function editItem(index, k, v) { inventoryItems[index][k] = v; recalcDerived(); save(); }
+
+function addItem(n = '', q = 1, s = false) {
+  // Проверка на свободный слот
+  if (getUsedSlots() + 1 > getMaxSlots()) {
+    alert('Нет свободных слотов инвентаря!');
+    return;
+  }
+  inventoryItems.push({ n, q, s });
+  renderInventory();
+  save();
+}
+
+function removeItem(index) {
+  inventoryItems.splice(index, 1);
+  renderInventory();
+  save();
+}
+
+// Кнопка + у предмета
+function incItem(index) {
+  const item = inventoryItems[index];
+  if (item.s) {
+    // Расходник: увеличиваем количество, но следим за слотами
+    const wouldBeSlots = Math.ceil((item.q + 1) / 10);
+    const currentSlots = Math.ceil(item.q / 10);
+    if (getUsedSlots() - currentSlots + wouldBeSlots > getMaxSlots()) {
+      alert('Нет свободных слотов инвентаря!');
+      return;
+    }
+    item.q += 1;
+  } else {
+    // Обычный предмет: добавляем новую строку копией
+    if (getUsedSlots() + 1 > getMaxSlots()) {
+      alert('Нет свободных слотов инвентаря!');
+      return;
+    }
+    inventoryItems.push({ n: item.n, q: 1, s: false });
+  }
+  renderInventory();
+  save();
+}
+
+// Кнопка − у предмета
+function decItem(index) {
+  const item = inventoryItems[index];
+  if (item.s) {
+    // Расходник: уменьшаем, если 0 — удаляем
+    item.q -= 1;
+    if (item.q <= 0) inventoryItems.splice(index, 1);
+  } else {
+    // Обычный предмет: удаляем целиком
+    inventoryItems.splice(index, 1);
+  }
+  renderInventory();
+  save();
+}
+
+// Переключение галочки "расходник"
+function toggleStack(index, checked) {
+  const item = inventoryItems[index];
+  if (!checked) {
+    // Снимаем галочку: предмет перестаёт стакаться
+    // Проверим, влезет ли оно всё как отдельные слоты
+    const currentSlots = Math.ceil(item.q / 10);
+    const newSlots = item.q;
+    if (getUsedSlots() - currentSlots + newSlots > getMaxSlots()) {
+      alert('Нельзя снять «расходник»: ' + item.q + ' шт. не влезут в инвентарь!');
+      renderInventory();
+      return;
+    }
+  }
+  item.s = checked;
+  renderInventory();
+  save();
+}
+
+// Редактирование названия
+function editItem(index, k, v) {
+  inventoryItems[index][k] = v;
+  save();
+}
 
 function addStartingGear() {
   const cls = document.getElementById('charClass').value, d = classData[cls];
   if (!d || !d.gear || d.gear.length === 0) { alert('У этого класса нет стартового снаряжения.'); return; }
-  if (confirm(`Заменить инвентарь снаряжением класса "${cls}"?`)) { inventoryItems = JSON.parse(JSON.stringify(d.gear)); renderInventory(); save(); }
+  if (confirm(`Заменить инвентарь снаряжением класса "${cls}"?`)) {
+    inventoryItems = JSON.parse(JSON.stringify(d.gear));
+    renderInventory();
+    save();
+  }
 }
 
 // === НАЧАЛЬНЫЕ НАБОРЫ ===
@@ -288,15 +384,40 @@ function buildKitList() {
   });
 }
 function toggleKit(index) { document.getElementById('kit_' + index).classList.toggle('open'); }
+
 function takeKit(index) {
   const kit = starterKits[index];
+  
+  // Снимаем предметы старого набора (если был)
+  let tempInventory = JSON.parse(JSON.stringify(inventoryItems));
   if (chosenKit) {
     if (!confirm(`Заменить "${chosenKit}" на "${kit.name}"? Вещи старого набора удалятся.`)) return;
     const oldKit = starterKits.find(k => k.name === chosenKit);
-    if (oldKit) { oldKit.items.forEach(old => { const idx = inventoryItems.findIndex(inv => inv.n === old.n); if (idx !== -1) inventoryItems.splice(idx, 1); }); }
+    if (oldKit) {
+      oldKit.items.forEach(old => {
+        const idx = tempInventory.findIndex(inv => inv.n === old.n);
+        if (idx !== -1) tempInventory.splice(idx, 1);
+      });
+    }
   }
+  
+  // Считаем, сколько слотов нужно для нового набора
+  let newSlots = 0;
+  kit.items.forEach(item => { newSlots += item.s ? Math.ceil(item.q / 10) : item.q; });
+  
+  // Считаем, сколько займёт временный инвентарь
+  let tempUsed = 0;
+  tempInventory.forEach(item => { tempUsed += item.s ? Math.ceil(item.q / 10) : item.q; });
+  
+  if (tempUsed + newSlots > getMaxSlots()) {
+    alert('Этот набор не влезет в инвентарь! Освободи место или прокачай Выносливость.');
+    return;
+  }
+  
+  inventoryItems = tempInventory;
   kit.items.forEach(item => inventoryItems.push(JSON.parse(JSON.stringify(item))));
-  chosenKit = kit.name; localStorage.setItem('chosenKit', chosenKit);
+  chosenKit = kit.name;
+  localStorage.setItem('chosenKit', chosenKit);
   renderInventory(); buildKitList(); save();
 }
 
