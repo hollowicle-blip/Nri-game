@@ -410,3 +410,118 @@ textarea {
   background: #0f3460;
   pointer-events: none;
   }
+/* === ГЕНЕЗИС === */
+.genesis-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  font-size: .95em;
+}
+.genesis-toggle input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+.genesis-slots {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.genesis-slot {
+  background: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.genesis-slot .slot-num {
+  font-weight: bold;
+  color: #e94560;
+  font-size: .9em;
+  min-width: 18px;
+  text-align: center;
+}
+.genesis-slot select {
+  flex: 1;
+  min-width: 0;
+}
+.genesis-slot input {
+  flex: 2;
+  min-width: 0;
+}
+.genesis-slot.slot-empty {
+  opacity: .4;
+}
+
+/* === МАГИЯ === */
+.spell-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.spell-card {
+  background: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  padding: 8px;
+}
+.spell-header {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.spell-header input {
+  flex: 1;
+}
+.spell-header select {
+  width: 100px;
+  flex-shrink: 0;
+}
+.spell-desc {
+  margin-top: 4px;
+}
+.spell-desc textarea {
+  font-size: .85em;
+  min-height: 36px;
+}
+.spell-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+.spell-cost {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .8em;
+  color: #aaa;
+}
+.spell-cost input {
+  width: 45px;
+  text-align: center;
+  padding: 4px;
+}
+.add-spell-btn {
+  padding: 8px 12px;
+  background: #e94560;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: .85em;
+  margin-top: 8px;
+}
+.element-fire { border-left: 3px solid #e94560; }
+.element-water { border-left: 3px solid #4a9ff5; }
+.element-earth { border-left: 3px solid #8b6914; }
+.element-wind { border-left: 3px solid #7fdbca; }
+.element-dark { border-left: 3px solid #9b59b6; }
+.element-light { border-left: 3px solid #f1c40f; }
+.element-universal { border-left: 3px solid #95a5a6; }
