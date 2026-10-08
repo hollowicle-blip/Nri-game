@@ -154,7 +154,24 @@
   <p style="font-size:.8em;color:#aaa;margin-bottom:6px">Нажми на набор, чтобы посмотреть содержимое. Выбери один.</p>
   <div class="kit-list" id="kitList"></div>
 </div>
-  
+  <!-- ГЕНЕЗИС -->
+<h2>Генезис</h2>
+<div class="genesis-toggle">
+  <input type="checkbox" id="hasGenesis" onchange="toggleGenesis()">
+  <span>У персонажа есть Генезис</span>
+</div>
+<div id="genesisBlock" style="display:none">
+  <p style="font-size:.78em;color:#aaa;margin:6px 0">Выбери стихию каждого слота и впиши название капеля</p>
+  <div class="genesis-slots" id="genesisSlots"></div>
+</div>
+
+<!-- МАГИЯ -->
+<div id="magicSection" style="display:none">
+  <h2>✨ Магия</h2>
+  <p style="font-size:.78em;color:#aaa;margin-bottom:6px">Заклинания из установленных капелей</p>
+  <div class="spell-list" id="spellList"></div>
+  <button class="add-spell-btn" onclick="addSpell()">➕ Добавить заклинание</button>
+</div>
 <!-- НАВЫКИ -->
 <h2>Навыки</h2>
 <div class="points-left">Очки навыков: <b id="skillPointsLeft">10</b> / 10</div>
