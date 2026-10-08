@@ -433,20 +433,141 @@ function takeKit(index) {
   buildKitList(); // Эта функция теперь автоматически скроет весь блок!
   save();
 }
+// === ГЕНЕЗИС ===
+const GENESIS_SLOTS = 5;
+const elements = [
+  { value: '', label: '— Пусто —' },
+  { value: 'universal', label: '⚪ Универсальный' },
+  { value: 'fire', label: '🔥 Огонь' },
+  { value: 'water', label: '💧 Вода' },
+  { value: 'earth', label: '🪨 Земля' },
+  { value: 'wind', label: '🌪️ Ветер' },
+  { value: 'dark', label: '🌑 Тьма' },
+  { value: 'light', label: '☀️ Свет' }
+];
 
+let genesisSlots = [];
+for (let i = 0; i < GENESIS_SLOTS; i++) genesisSlots.push({ element: '', capel: '' });
+
+function toggleGenesis() {
+  const has = document.getElementById('hasGenesis').checked;
+  document.getElementById('genesisBlock').style.display = has ? 'block' : 'none';
+  if (!has) document.getElementById('magicSection').style.display = 'none';
+  else updateMagicVisibility();
+  save();
+}
+
+function buildGenesisSlots() {
+  const container = document.getElementById('genesisSlots');
+  container.innerHTML = '';
+  for (let i = 0; i < GENESIS_SLOTS; i++) {
+    const slot = genesisSlots[i];
+    const isEmpty = !slot.element;
+    let optionsHTML = '';
+    elements.forEach(el => {
+      optionsHTML += `<option value="${el.value}" ${slot.element === el.value ? 'selected' : ''}>${el.label}</option>`;
+    });
+    const div = document.createElement('div');
+    div.className = 'genesis-slot' + (isEmpty ? ' slot-empty' : '');
+    div.innerHTML = `
+      <span class="slot-num">${i + 1}</span>
+      <select onchange="setSlotElement(${i}, this.value)">${optionsHTML}</select>
+      <input type="text" value="${slot.capel}" placeholder="Название капеля" oninput="setSlotCapel(${i}, this.value)" ${isEmpty ? 'disabled' : ''}>`;
+    container.appendChild(div);
+  }
+}
+
+function setSlotElement(index, value) {
+  genesisSlots[index].element = value;
+  if (!value) genesisSlots[index].capel = '';
+  buildGenesisSlots();
+  updateMagicVisibility();
+  save();
+}
+
+function setSlotCapel(index, value) {
+  genesisSlots[index].capel = value;
+  save();
+}
+
+function updateMagicVisibility() {
+  const hasAny = genesisSlots.some(s => s.element !== '');
+  document.getElementById('magicSection').style.display = hasAny ? 'block' : 'none';
+}
+
+// === МАГИЯ ===
+let spells = [];
+
+function renderSpells() {
+  const container = document.getElementById('spellList');
+  container.innerHTML = '';
+  spells.forEach((spell, index) => {
+    let elemClass = spell.element ? 'element-' + spell.element : '';
+    let optionsHTML = '';
+    elements.forEach(el => {
+      if (el.value === '') {
+        optionsHTML += `<option value="" ${spell.element === '' ? 'selected' : ''}>Стихия</option>`;
+      } else {
+        optionsHTML += `<option value="${el.value}" ${spell.element === el.value ? 'selected' : ''}>${el.label}</option>`;
+      }
+    });
+    const card = document.createElement('div');
+    card.className = 'spell-card ' + elemClass;
+    card.innerHTML = `
+      <div class="spell-header">
+        <input type="text" value="${spell.name}" placeholder="Название заклинания" oninput="editSpell(${index}, 'name', this.value)">
+        <select onchange="editSpell(${index}, 'element', this.value)">${optionsHTML}</select>
+      </div>
+      <div class="spell-desc">
+        <textarea placeholder="Описание / эффект" oninput="editSpell(${index}, 'desc', this.value)">${spell.desc}</textarea>
+      </div>
+      <div class="spell-footer">
+        <div class="spell-cost">
+          <span>Мана:</span>
+          <input type="number" value="${spell.cost}" min="0" oninput="editSpell(${index}, 'cost', +this.value)">
+        </div>
+        <button class="del-item-btn" onclick="removeSpell(${index})">✕</button>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function addSpell() {
+  spells.push({ name: '', element: '', desc: '', cost: 0 });
+  renderSpells();
+  save();
+}
+
+function removeSpell(index) {
+  spells.splice(index, 1);
+  renderSpells();
+  save();
+}
+
+function editSpell(index, key, value) {
+  spells[index][key] = value;
+  if (key === 'element') renderSpells();
+  save();
+  }
 // === СОХРАНЕНИЕ И ЗАГРУЗКА ===
 const fields = ['name', 'race', 'charClass', 'origin', 'tag1', 'tag2', 'tag3', 'bond1', 'bond2', 'bond3', 'bond4', 'level', 'classHPValue', 'manaBonus'];
 function save() {
-  const data = {}; fields.forEach(id => data[id] = document.getElementById(id).value);
+  const data = {};
+  fields.forEach(id => data[id] = document.getElementById(id).value);
   data.ether = document.getElementById('ether').textContent;
   attrs.forEach(a => data['attr_' + a] = document.getElementById('attr_' + a).textContent);
   for (let i = 0; i < skillNames.length; i++) data['skill_' + i] = document.getElementById('skill_' + i).textContent;
   ['HP', 'Mana', 'Charges', 'Sat'].forEach(k => data['cur' + k] = document.getElementById('cur' + k).textContent);
-  data.inventory = inventoryItems; data.chosenKit = chosenKit;
+  data.inventory = inventoryItems;
+  data.chosenKit = chosenKit;
+  data.hasGenesis = document.getElementById('hasGenesis').checked;
+  data.genesisSlots = genesisSlots;
+  data.spells = spells;
   localStorage.setItem('charSheet', JSON.stringify(data));
 }
 function load() {
-  const raw = localStorage.getItem('charSheet'); if (!raw) { recalcDerived(); return; }
+  const raw = localStorage.getItem('charSheet');
+  if (!raw) { recalcDerived(); return; }
   const data = JSON.parse(raw);
   fields.forEach(id => { if (data[id] !== undefined) document.getElementById(id).value = data[id]; });
   if (data.ether) document.getElementById('ether').textContent = data.ether;
@@ -455,14 +576,28 @@ function load() {
   ['HP', 'Mana', 'Charges', 'Sat'].forEach(k => { if (data['cur' + k] !== undefined) document.getElementById('cur' + k).textContent = data['cur' + k]; });
   if (data.inventory) inventoryItems = data.inventory;
   if (data.chosenKit) chosenKit = data.chosenKit;
+  if (data.hasGenesis) { document.getElementById('hasGenesis').checked = true; document.getElementById('genesisBlock').style.display = 'block'; }
+  if (data.genesisSlots) genesisSlots = data.genesisSlots;
+  if (data.spells) spells = data.spells;
 }
 
 // === ЗАПУСК ===
 buildSkills();
 load();
 buildKitList();
+buildGenesisSlots();
+updateMagicVisibility();
+renderSpells();
 renderInventory();
+updateAttrPoints();
+updateSkillPoints();
+recalcDerived();
+
+document.getElementById('race').dispatchEvent(new Event('change'));
+document.getElementById('charClass').dispatchEvent(new Event('change'));
+document.getElementById('origin').dispatchEvent(new Event('change'));
 
 document.querySelectorAll('input, select, textarea').forEach(el => {
-  el.addEventListener('input', save); el.addEventListener('change', save);
+  el.addEventListener('input', save);
+  el.addEventListener('change', save);
 });
